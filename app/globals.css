@@ -1,0 +1,52 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+  --color-background: #000119;
+  --stroke-width: calc(1em / 16);
+  --font-weight: 700;
+  --letter-spacing: calc(1em / 8);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0F172A;
+    --foreground: #ededed;
+  }
+}
+
+h1 {
+  background-clip: text;
+  background-image: linear-gradient(to right, #09f1b8, #00a2ff, #ff00d2, #fed90f);
+  color: var(--color-background);
+  letter-spacing: var(--letter-spacing);
+  padding: calc(--stroke-width / 2);
+  -webkit-text-stroke-color: transparent;
+  -webkit-text-stroke-width: var(--stroke-width);
+}
+
+@keyframes stroke-rgb {
+  0%   { -webkit-text-stroke-color: rgb(200, 50, 50); }  
+  25%  { -webkit-text-stroke-color: rgb(200, 150, 50); } 
+  50%  { -webkit-text-stroke-color: rgb(50, 200, 150); } 
+  75%  { -webkit-text-stroke-color: rgb(100, 150, 250); } 
+  100% { -webkit-text-stroke-color: rgb(200, 50, 50); }   
+}
+
+.text-stroke-animated {
+  animation: stroke-rgb 3s infinite;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
