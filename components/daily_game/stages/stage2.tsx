@@ -39,7 +39,7 @@ const Stage2Daily = ({
         <p>{descriptionAnime}...</p>
 
       </div>
-      <p className="mt-4">Anime: {showHint} </p>
+      <p className="mt-4">Anime: {showHint} _</p>
       <div className="mt-4 relative w-80">
         <input
           placeholder="Adivina el anime..."
