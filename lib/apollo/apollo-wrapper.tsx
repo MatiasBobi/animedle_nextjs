@@ -9,7 +9,7 @@ import {
 
 function makeClient() {
   const httpLink = new HttpLink({
-    uri: "https://graphql.anilist.co",
+    uri: "https://graphql.animethemes.moe/",
   });
 
   return new ApolloClient({

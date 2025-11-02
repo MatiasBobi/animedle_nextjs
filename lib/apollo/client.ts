@@ -10,7 +10,10 @@ export function getClient() {
   return new ApolloClient({
     cache: new InMemoryCache(),
     link: new HttpLink({
-      uri: "https://graphql.anilist.co",
+      uri: "https://graphql.animethemes.moe/",
+      fetchOptions:{
+        cache: "no-store"
+      }
     }),
   });
 }
