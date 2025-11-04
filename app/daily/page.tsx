@@ -1,9 +1,6 @@
-import { getDailyRandomAnime } from "@/server/getDailyRandomAnime";
-import { HydrationBoundary } from "@tanstack/react-query";
-import { getQueryClientTanStack } from "@/lib/utils/getQueryClientTanStack";
 import DailyGame from "@/components/daily_game/DailyGame";
-import { dehydrate } from "@tanstack/react-query";
 import { createClient } from "@/lib/supabase/server";
+import { useDailyStore } from "@/store/daily-store";
 const DailyPage = async () => {
   const supabase = createClient();
 
@@ -11,8 +8,14 @@ const DailyPage = async () => {
     .from("anime_daily")
     .select("*");
 
-  console.log(dailyAnimes);
-  console.log(dailyAnimesError);
+  const {data: animeTitles, error: AnimesTitlesError} = await (await supabase).from("anime").select("title");
+
+  const setAnimeTitles = useDailyStore(state => state.setAnimeTitles)
+
+  if(!AnimesTitlesError) {
+    setAnimeTitles(animeTitles?.map(anime => anime.title))
+  }
+
   return (
     <main className="flex flex-col gap-4 h-screen">
       <DailyGame animes={dailyAnimes || []} />

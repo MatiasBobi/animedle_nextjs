@@ -1,14 +1,6 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
-import React from "react";
-import { getDailyRandomAnime } from "@/server/getDailyRandomAnime";
 import { AnimeDaily } from "@/types/daily_types";
-import { AnimeThemesData } from "@/types/video_animetheme_types";
-
-import { QUERY_VIDEO_ANIMETHEMES } from "@/graphql/query_daily_anilist_gql";
-import { useSuspenseQuery } from "@apollo/client/react";
-import { useEffect, useState } from "react";
 import Stage1Daily from "./stages/stage1";
 import Stage2Daily from "./stages/stage2";
 import Stage3Daily from "./stages/stage3";

@@ -1,16 +1,16 @@
 /* El stage 2 consiste en adivinar el anime por su descripcion */
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 const Stage2Daily = ({
   description,
   title,
 }: {
   description: string;
   title: string;
+ 
 }) => {
   const [descriptionAnime, setDescriptionAnime] = useState<string>(description);
   const [userGuess, setUserGuess] = useState<string>("");
-  const [showHint, setShowHint] = useState("");
 
   const cleanAnimeTitle = (str: string) => {
     return str.replace(/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?¿¡]/g, "");
@@ -24,22 +24,14 @@ const Stage2Daily = ({
     );
     setDescriptionAnime(shortDescriptionWithoutTitle);
   }
-  const getRandomHint = () => {
-    const randomIndex = Math.floor(Math.random() * title.length);
-    return title[randomIndex];
-  };
 
-  const handleShowHint = () => {
-    setShowHint(`${title[0]}`);
-    
-  };
   return (
     <>
       <div className="flex flex-col gap-2 p-4 bg-[#1E293B] rounded-2xl h-108 overflow-y-auto [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar]:w-2">
         <p>{descriptionAnime}...</p>
 
       </div>
-      <p className="mt-4">Anime: {showHint} _</p>
+      <p className="mt-4">Anime:  {descriptionAnime[0]}</p>
       <div className="mt-4 relative w-80">
         <input
           placeholder="Adivina el anime..."

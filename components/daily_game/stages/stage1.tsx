@@ -15,8 +15,6 @@ const Stage1Daily = ({ images, title }: { images: string; title: string }) => {
   const [userGuess, setUserGuess] = useState("");
   const [isCorrect, setIsCorrect] = useState(false);
   const totalPieces = 6;
-  
-  
 
   const handleIncorrectAttempt = () => {
     if (userGuess.toLowerCase().trim() === title.toLowerCase().trim()) {
