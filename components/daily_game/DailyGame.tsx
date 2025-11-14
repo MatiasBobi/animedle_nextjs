@@ -7,19 +7,28 @@ import Stage3Daily from "./stages/stage3";
 import Stage4Daily from "./stages/stage4";
 import Stage5Daily from "./stages/stage5";
 import { useDailyStore } from "@/store/daily-store";
-
+import { useAnimeTitles } from "@/hooks/useAnimeTitles";
 const DailyGame = ({ animes }: { animes: AnimeDaily[] }) => {
   const { GameNumber } = useDailyStore();
 
+  useAnimeTitles();
   //STAGE 1
   const stage1_img_url = animes[0].image_url;
   const stage1_title = animes[0].title;
 
-  console.log(stage1_img_url);
-
   // STAGE 2
   const stage2_sypnosis = animes[1].synopsis;
   const stage2_title = animes[1].title;
+
+  // STAGE 3
+
+  const opening_url = animes[2].openings?.split("|")?.[0];
+  const stage3_title = animes[2].title;
+
+  // STAGE 4
+
+  const ending_url = animes[3].endings?.split("|")?.[0];
+  const stage4_title = animes[3].title;
 
   const renderStage = () => {
     switch (GameNumber) {
@@ -33,9 +42,21 @@ const DailyGame = ({ animes }: { animes: AnimeDaily[] }) => {
           />
         );
       case 3:
-        return <Stage3Daily />;
+        return (
+          <Stage3Daily
+            title={stage3_title}
+            url_video={opening_url || ""}
+            next_stage={4}
+          />
+        );
       case 4:
-        return <Stage4Daily />;
+        return (
+          <Stage3Daily
+            title={stage4_title}
+            url_video={ending_url || ""}
+            next_stage={5}
+          />
+        );
       case 5:
         return <Stage5Daily />;
       default:
@@ -44,7 +65,7 @@ const DailyGame = ({ animes }: { animes: AnimeDaily[] }) => {
   };
   return (
     <>
-      <section className="flex gap-4 flex-wrap justify-center p-2">
+      <section className="flex flex-wrap justify-center p-2">
         <div>
           <p className="bg-[#1E293B] p-4 md:px-12 rounded-bl-2xl rounded-tl-2xl ">
             Juego 1
@@ -68,7 +89,7 @@ const DailyGame = ({ animes }: { animes: AnimeDaily[] }) => {
 
       {/* Seccion de los renders de los stages. */}
       <section className="flex justify-center items-center">
-        <div className="w-72 h-64 md:w-180 md:h-96 ">{renderStage()}</div>
+        <div className="w-90 h-64 md:w-180 md:h-96 ">{renderStage()}</div>
       </section>
     </>
   );

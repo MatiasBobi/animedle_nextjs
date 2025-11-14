@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { useDailyStore } from "@/store/daily-store";
+import AnimeAllTitlesMenu from "@/components/animeAllTitlesMenu/animeAllTitlesMenu";
 
 const Stage1Daily = ({ images, title }: { images: string; title: string }) => {
   const { setGameNumber } = useDailyStore();
-  const [incorrectAttempts, setIncorrectAttempts] = useState(0);
+  const [incorrectAttempts, setIncorrectAttempts] = useState(1);
   const [individualPiece, setIndividualPiece] = useState([
     true,
     false,
@@ -12,54 +13,40 @@ const Stage1Daily = ({ images, title }: { images: string; title: string }) => {
     false,
     false,
   ]);
-  const [userGuess, setUserGuess] = useState("");
-  const [isCorrect, setIsCorrect] = useState(false);
+  const [isCorrect, setIsCorrect] = useState<boolean | string>("no_respondido");
   const totalPieces = 6;
 
-  const handleIncorrectAttempt = () => {
+  const handleUserGuess = (userGuess: string) => {
+    if (isCorrect === true || incorrectAttempts >= 6) return;
+
+    // Aca chequeamos si es correcto lo que el usuario ingresa
     if (userGuess.toLowerCase().trim() === title.toLowerCase().trim()) {
-      setIncorrectAttempts((prev) => prev + 1);
       setIndividualPiece([true, true, true, true, true, true]);
       setIsCorrect(true);
-      return;
-    }
+    } else {
+      // Lógica para intento incorrecto
+      const newAttempts = incorrectAttempts + 1;
+      setIncorrectAttempts(newAttempts);
 
-    if (incorrectAttempts <= totalPieces - 1) {
       setIndividualPiece((prev) => {
         const newPieces = [...prev];
         newPieces[incorrectAttempts] = true;
         return newPieces;
       });
-      setIncorrectAttempts((prev) => prev + 1);
 
-      console.log(incorrectAttempts);
+      if (newAttempts === 6) {
+        setIsCorrect(false);
+      }
     }
   };
 
-  const revealedPercentage = ((incorrectAttempts + 1) / totalPieces) * 100;
-
   return (
     <div className="flex justify-center items-center flex-col">
-      <div className=" p-2">
-        <div className="md:hidden relative w-80">
-          <input
-            placeholder="Adivina el anime..."
-            value={userGuess}
-            onChange={(e) => setUserGuess(e.target.value)}
-            className="w-full h-16 bg-[#1E293B] rounded-2xl p-4 pr-28 text-white outline-none"
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                handleIncorrectAttempt();
-              }
-            }}
-          />
-          <button
-            onClick={handleIncorrectAttempt}
-            className="absolute right-2 cursor-pointer top-1/2 -translate-y-1/2 h-12 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-colors"
-          >
-            Adivinar
-          </button>
-        </div>
+      <div className="md:hidden block">
+        <AnimeAllTitlesMenu
+          isCorrect={isCorrect}
+          onUserGuess={handleUserGuess}
+        />
       </div>
       <div className="mt-2 md:mt-0">
         <div className="relative md:w-76 md:h-96 inline-block max-w-full">
@@ -85,9 +72,9 @@ const Stage1Daily = ({ images, title }: { images: string; title: string }) => {
 
       <div className="flex flex-col items-center gap-2 mb-4">
         <p className="font-bold mt-4">Intentos {incorrectAttempts}/6</p>
-        {isCorrect ? (
+        {isCorrect !== "no_respondido" ? (
           <>
-            <p className="text-green-500">¡Correcto!</p>
+            <p>El anime es: {title}</p>
             <button
               onClick={() => setGameNumber(2)}
               className="p-4 bg-blue-600 cursor-pointer hover:bg-blue-700 text-white font-semibold rounded-xl transition-colors"
@@ -96,36 +83,13 @@ const Stage1Daily = ({ images, title }: { images: string; title: string }) => {
             </button>
           </>
         ) : null}
-        {incorrectAttempts === 6 && !isCorrect && (
-          <>
-            <p className="text-red-500">¡Incorrecto!</p>
-            <button
-              onClick={() => setGameNumber(2)}
-              className="p-4 bg-blue-600 cursor-pointer hover:bg-blue-700 text-white font-semibold rounded-xl transition-colors"
-            >
-              Continuar
-            </button>
-          </>
-        )}
       </div>
-      <div className="hidden md:block relative w-80">
-        <input
-          placeholder="Adivina el anime..."
-          value={userGuess}
-          onChange={(e) => setUserGuess(e.target.value)}
-          className="w-full h-16 bg-[#1E293B] rounded-2xl p-4 pr-28 text-white outline-none"
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              handleIncorrectAttempt();
-            }
-          }}
+
+      <div className="hidden md:block">
+        <AnimeAllTitlesMenu
+          isCorrect={isCorrect}
+          onUserGuess={handleUserGuess}
         />
-        <button
-          onClick={handleIncorrectAttempt}
-          className="absolute right-2 cursor-pointer top-1/2 -translate-y-1/2 h-12 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-colors"
-        >
-          Adivinar
-        </button>
       </div>
     </div>
   );

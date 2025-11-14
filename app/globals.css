@@ -18,14 +18,20 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0F172A;
+    --background: #0f172a;
     --foreground: #ededed;
   }
 }
 
-h1 {
+.h1_custom {
   background-clip: text;
-  background-image: linear-gradient(to right, #09f1b8, #00a2ff, #ff00d2, #fed90f);
+  background-image: linear-gradient(
+    to right,
+    #09f1b8,
+    #00a2ff,
+    #ff00d2,
+    #fed90f
+  );
   color: var(--color-background);
   letter-spacing: var(--letter-spacing);
   padding: calc(--stroke-width / 2);
@@ -34,11 +40,21 @@ h1 {
 }
 
 @keyframes stroke-rgb {
-  0%   { -webkit-text-stroke-color: rgb(200, 50, 50); }  
-  25%  { -webkit-text-stroke-color: rgb(200, 150, 50); } 
-  50%  { -webkit-text-stroke-color: rgb(50, 200, 150); } 
-  75%  { -webkit-text-stroke-color: rgb(100, 150, 250); } 
-  100% { -webkit-text-stroke-color: rgb(200, 50, 50); }   
+  0% {
+    -webkit-text-stroke-color: rgb(200, 50, 50);
+  }
+  25% {
+    -webkit-text-stroke-color: rgb(200, 150, 50);
+  }
+  50% {
+    -webkit-text-stroke-color: rgb(50, 200, 150);
+  }
+  75% {
+    -webkit-text-stroke-color: rgb(100, 150, 250);
+  }
+  100% {
+    -webkit-text-stroke-color: rgb(200, 50, 50);
+  }
 }
 
 .text-stroke-animated {

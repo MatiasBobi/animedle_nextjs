@@ -1,23 +1,21 @@
-import { create } from 'zustand';
-import {persist, createJSONStorage} from 'zustand/middleware'
+import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
 import { createClient } from "@/lib/supabase/server";
 export type CounterDailyAttemps = {
-    GameNumber: number;
-    animeTitles: string[];
-}
+  GameNumber: number;
+  animeTitles: string[];
+};
 
 export type AnimesNamesList = {
-    title:string
-}
+  title: string;
+};
 
 export type CounterDailyActions = {
-    setGameNumber: (attempts: number) => void;
-    setAnimeTitles: (titles: string[]) => void;
-}
+  setGameNumber: (attempts: number) => void;
+  setAnimeTitles: (titles: string[]) => void;
+};
 
-export type COunterDailyStore = CounterDailyAttemps & CounterDailyActions
-
-
+export type COunterDailyStore = CounterDailyAttemps & CounterDailyActions;
 
 export const useDailyStore = create<COunterDailyStore>()(
   persist(
@@ -26,10 +24,9 @@ export const useDailyStore = create<COunterDailyStore>()(
       animeTitles: [],
       setGameNumber: (attempts: number) => set({ GameNumber: attempts }),
       setAnimeTitles: (titles: string[]) => set({ animeTitles: titles }),
-      
     }),
     {
-      name: 'daily-store',
+      name: "daily-store",
       storage: createJSONStorage(() => sessionStorage),
     }
   )

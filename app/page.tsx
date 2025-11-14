@@ -1,5 +1,8 @@
 import AuthButtonServer from "@/components/auth/auth-button-server";
 import CardIndex from "@/components/cardIndex/cardIndex";
+import NavBar from "@/components/navbar/navbar";
+import { createClient } from "@/lib/supabase/server";
+import { useDailyStore } from "@/store/daily-store";
 import {
   BsFillKeyboardFill,
   BsInfinity,
@@ -9,15 +12,11 @@ import {
 import { FaGamepad } from "react-icons/fa6";
 
 export default async function Home() {
-  //const supabase = await createClient();
-
-  //const { data: posts, error } = await supabase.from("post").select("*");
-
   return (
     <main>
-      <AuthButtonServer></AuthButtonServer>
+      <NavBar />
 
-      <h1 className="items-center justify-center text-center text-6xl py-8 text-stroke-animated">
+      <h1 className="h1_custom items-center justify-center text-center text-6xl py-8 text-stroke-animated">
         Animedle
       </h1>
 
