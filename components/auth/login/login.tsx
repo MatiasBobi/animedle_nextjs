@@ -1,86 +1,114 @@
-import { SupabaseClient } from "@supabase/supabase-js";
-import { useActionState } from "react";
+import { AuthError, SupabaseClient } from "@supabase/supabase-js";
+import { redirect } from "next/navigation";
+import { useActionState, useEffect, useState } from "react";
+import { useAuth } from "@/hooks/useAuthUser";
 
 const LoginComponent = ({ supabase }: { supabase: SupabaseClient }) => {
+  // User
+
+  useEffect(() => {
+    const getUserSession = async () => {
+      const { data, error } = await supabase.auth.getUser();
+      if (data.user) {
+        redirect("/");
+      }
+    };
+    getUserSession();
+  }, [supabase]);
   const [state, submitAction, isPending] = useActionState(
     async (prevState: any, queryData: FormData) => {
       const email = queryData.get("email");
       const password = queryData.get("password");
-      console.log(email);
-      console.log(password);
-      async function signUpNewUser() {
-        const { data, error } = await supabase.auth.signUp({
+
+      try {
+        const { data, error } = await supabase.auth.signInWithPassword({
           email: email as string,
           password: password as string,
-          options: {
-            emailRedirectTo: "http://localhost:3000/",
-          },
         });
-      }
-      try {
-        signUpNewUser();
-        console.log("Usuario creado");
+
+        if (error) {
+          return { error: "Error al iniciar sesión, verifica tus datos" };
+        }
+        if (data.session) {
+          setTimeout(() => {
+            redirect("/");
+          }, 3000);
+          return { success: "Inicio de sesión exitoso" };
+        }
       } catch (error) {
-        console.log(error);
-      }
-      /*const response = await fetch("/api/login", {
-        method: "POST",
-        body: JSON.stringify({ email, password }),
-      });
-
-      if (!response.ok) {
-        return { error: "Error al iniciar sesión" };
+        return {
+          error: "Hubo un error al intentar conectarse con el servidor.",
+        };
       }
 
-      const data = await response.json();
-      return data;*/
       return null;
     },
     null
   );
+
   return (
-    <main className="flex flex-col items-center justify-center min-h-screen">
-      <section className="flex flex-col w-96 max-w-128 h-128 max-h-140 items-center justify-center bg-gradient-to-br from-slate-700 to-slate-900 rounded-4xl shadow-2xl">
-        <h2 className="h-[10%] bg-gradient-to-r from-blue-600 to-purple-600 text-white w-full rounded-t-3xl flex items-center justify-center font-bold text-xl">
+    <section className="flex flex-col w-[90%] min-w-80 max-w-md lg:max-w-lg xl:max-w-xl items-center bg-[#131212] p-8 rounded-3xl mx-auto min-h-[400px] border border-gray-700">
+      <div className="w-full mb-8">
+        <h2 className="text-white w-full text-center font-bold text-3xl">
           Iniciar sesión
         </h2>
-        <form
-          action={submitAction}
-          className="flex flex-col w-full gap-4  h-[80%] justify-center items-center"
-        >
-          <p className="text-white font-medium">Correo electronico</p>
-          <input
-            type="email"
-            placeholder="Escribi tu correo electronico"
-            name="email"
-            required
-            className="w-[80%] bg-white py-4 rounded-2xl px-4 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-gray-400"
-          />
-          <p className="text-white font-medium">Contraseña</p>
-          <input
-            type="password"
-            placeholder="Contraseña"
-            name="password"
-            required
-            className="w-[80%] bg-white py-4 rounded-2xl px-4 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-gray-400"
-          />
-          <button
-            className="w-[80%] cursor-pointer
-           bg-gradient-to-r from-blue-500 to-purple-600 text-white py-4 rounded-2xl font-bold hover:from-blue-600 hover:to-purple-700 transition-all duration-300 "
-          >
+      </div>
+
+      {state?.success && (
+        <div className="w-full bg-green-500 text-white p-4 rounded-2xl text-center my-4">
+          {state.success}
+        </div>
+      )}
+      {state?.error && (
+        <div className="w-full bg-red-500 text-white p-4 rounded-2xl text-center my-4">
+          {state.error}
+        </div>
+      )}
+      <form
+        action={submitAction}
+        className="flex flex-col w-full h-full justify-between space-y-6"
+      >
+        <div className="space-y-6">
+          <div className="flex flex-col items-center justify-center space-y-2">
+            <p className="text-white text-center font-medium">
+              Correo electronico
+            </p>
+            <input
+              type="email"
+              placeholder="Escribi tu correo electronico"
+              name="email"
+              required
+              className="w-[100%] bg-gray-900 py-3 rounded-2xl px-4 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-gray-400 text-white"
+            />
+          </div>
+
+          <div className="flex flex-col items-center justify-center space-y-2">
+            <p className="text-white text-center font-medium">Contraseña</p>
+            <input
+              type="password"
+              placeholder="Contraseña"
+              name="password"
+              required
+              className="w-[100%] bg-gray-900 py-3 rounded-2xl px-4 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-gray-400 text-white"
+            />
+          </div>
+        </div>
+
+        <div className="flex flex-col justify-center items-center pt-4">
+          <button className="w-[80%] cursor-pointer bg-gray-900 text-white py-3 rounded-2xl font-bold hover:bg-blue-600 transition-all duration-300">
             Ingresar
           </button>
-        </form>
-        <div className="h-[10%]">
-          <p>
-            ¿No estas registrado?{" "}
-            <button className="text-blue-400 cursor-pointer">
-              Registrate aca
-            </button>
-          </p>
         </div>
-      </section>
-    </main>
+      </form>
+      <div className="mt-4 text-[1.2rem]">
+        <p>
+          ¿No estás registrado? 
+          <button className="text-blue-400 cursor-pointer font-bold">
+            Regístrate acá
+          </button>
+        </p>
+      </div>
+    </section>
   );
 };
 

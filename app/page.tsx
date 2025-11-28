@@ -14,8 +14,6 @@ import { FaGamepad } from "react-icons/fa6";
 export default async function Home() {
   return (
     <main>
-      <NavBar />
-
       <h1 className="h1_custom items-center justify-center text-center text-6xl py-8 text-stroke-animated">
         Animedle
       </h1>

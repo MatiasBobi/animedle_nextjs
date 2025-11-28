@@ -1,6 +1,8 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
-import { createClient } from "@/lib/supabase/server";
+
+
+
 export type CounterDailyAttemps = {
   GameNumber: number;
   animeTitles: string[];

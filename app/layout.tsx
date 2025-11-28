@@ -4,6 +4,7 @@ import "./globals.css";
 import { ApolloWrapper } from "@/lib/apollo/apollo-wrapper";
 import { TanstackProvider } from "@/components/providers/tanstack-provider";
 import { Suspense } from "react";
+import NavBar from "@/components/navbar/navbar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,9 +31,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <ApolloWrapper>
-          <TanstackProvider>{children}</TanstackProvider>
-        </ApolloWrapper>
+        <NavBar />
+
+        {children}
       </body>
     </html>
   );
