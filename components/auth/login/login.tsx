@@ -2,7 +2,8 @@ import { AuthError, SupabaseClient } from "@supabase/supabase-js";
 import { redirect } from "next/navigation";
 import { useActionState, useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuthUser";
-
+import { ToastContainer, toast } from "react-toastify";
+import Link from "next/link";
 const LoginComponent = ({ supabase }: { supabase: SupabaseClient }) => {
   // User
 
@@ -30,9 +31,10 @@ const LoginComponent = ({ supabase }: { supabase: SupabaseClient }) => {
           return { error: "Error al iniciar sesión, verifica tus datos" };
         }
         if (data.session) {
-          setTimeout(() => {
-            redirect("/");
-          }, 3000);
+          toast.success("Inicio de sesión exitoso", {
+            onClose: () => redirect("/"),
+          });
+
           return { success: "Inicio de sesión exitoso" };
         }
       } catch (error) {
@@ -48,6 +50,7 @@ const LoginComponent = ({ supabase }: { supabase: SupabaseClient }) => {
 
   return (
     <section className="flex flex-col w-[90%] min-w-80 max-w-md lg:max-w-lg xl:max-w-xl items-center bg-[#131212] p-8 rounded-3xl mx-auto min-h-[400px] border border-gray-700">
+      <ToastContainer />
       <div className="w-full mb-8">
         <h2 className="text-white w-full text-center font-bold text-3xl">
           Iniciar sesión
@@ -103,9 +106,11 @@ const LoginComponent = ({ supabase }: { supabase: SupabaseClient }) => {
       <div className="mt-4 text-[1.2rem]">
         <p>
           ¿No estás registrado? 
-          <button className="text-blue-400 cursor-pointer font-bold">
-            Regístrate acá
-          </button>
+          <Link href="/register">
+            <button className="text-blue-400 cursor-pointer font-bold">
+              Regístrate acá
+            </button>
+          </Link>
         </p>
       </div>
     </section>

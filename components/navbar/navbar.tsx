@@ -8,6 +8,7 @@ import { FaEnvelope, FaHome, FaGamepad } from "react-icons/fa";
 import { FcBarChart } from "react-icons/fc";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { redirect } from "next/navigation";
+import { ToastContainer, toast } from "react-toastify";
 
 const NavBar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -56,6 +57,7 @@ const NavBar = () => {
   return (
     <nav className="flex flex-row justify-between items-center md:p-0 py-6 px-4 bg-gradient-to-r from-gray-900 to-gray-800 border-b border-gray-700 md:border-none md:bg-[#171717] relative">
       {/* Boton menu mobile */}
+
       <div className="md:hidden">
         <button onClick={() => setIsOpen(!isOpen)}>
           {isOpen ? (

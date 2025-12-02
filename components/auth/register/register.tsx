@@ -1,45 +1,80 @@
 import { SupabaseClient } from "@supabase/supabase-js";
 import { useActionState } from "react";
+import { ImSpinner9 } from "react-icons/im";
 
 const RegisterComponent = ({ supabase }: { supabase: SupabaseClient }) => {
   const [state, submitAction, isPending] = useActionState(
     async (prevState: any, queryData: FormData) => {
       const email = queryData.get("email");
       const password = queryData.get("password");
-      console.log(email);
-      console.log(password);
-      async function signUpNewUser() {
-        const { data, error } = await supabase.auth.signUp({
-          email: email as string,
-          password: password as string,
-          options: {
-            emailRedirectTo: "http://localhost:3000/",
-          },
-        });
+      const username = queryData.get("username");
+      const repit_password = queryData.get("repeatPassword");
+
+      if (password !== repit_password) {
+        return { error: "Las contraseñas no coinciden" };
       }
+
       try {
-        signUpNewUser();
-        console.log("Usuario creado");
-      } catch (error) {
-        console.log(error);
-      }
-      /*const response = await fetch("/api/login", {
-        method: "POST",
-        body: JSON.stringify({ email, password }),
-      });
+        // Registrar usuario en Supabase Auth
+        const { data: authData, error: authError } = await supabase.auth.signUp(
+          {
+            email: email as string,
+            password: password as string,
+            options: {
+              data: {
+                display_name: username as string,
+              },
+              emailRedirectTo: "http://localhost:3000/auth/callback",
+            },
+          }
+        );
 
-      if (!response.ok) {
-        return { error: "Error al iniciar sesión" };
-      }
+        if (authError) {
+          return { error: authError.message || "Error al registrar usuario" };
+        }
 
-      const data = await response.json();
-      return data;*/
-      return null;
+        // Aqui verifico si se creo un usuario
+        if (!authData.user) {
+          return { error: "No se pudo crear el usuario" };
+        }
+
+        // Verificamos si el usuario necesita el mail o si ya esta registrado.
+        if (authData.user.identities && authData.user.identities.length === 0) {
+          return { error: "El usuario ya está registrado" };
+        }
+
+        if (authData.user.confirmed_at || authData.user.email_confirmed_at) {
+          return { success: "Usuario registrado y verificado con éxito" };
+        } else {
+          return {
+            success:
+              "Usuario registrado con éxito. Por favor, verifica tu email para activar tu cuenta.",
+          };
+        }
+      } catch (error) {}
+
+      return { error: "Error al registrarse" };
     },
     null
   );
   return (
     <section className="flex flex-col w-[80%] min-w-80 max-w-md lg:max-w-lg xl:max-w-xl items-center bg-[#131212] p-8 rounded-3xl mx-auto min-h-[500px] border border-gray-700">
+      {state?.success && (
+        <div className="w-full bg-green-500 text-white p-4 rounded-2xl text-center my-4">
+          {state.success}
+        </div>
+      )}
+      {state?.error && (
+        <div className="w-full bg-red-500 text-white p-4 rounded-2xl text-center my-4">
+          {state.error}
+        </div>
+      )}
+      {isPending && (
+        <div className="w-full bg-yellow-500 text-white p-4 rounded-2xl text-center my-4">
+          <ImSpinner9 size={32} className="animate-spin" />
+        </div>
+      )}
+
       <div className="w-full mb-8">
         <h2 className="text-white w-full text-center font-bold text-3xl">
           Registrarse
@@ -52,9 +87,28 @@ const RegisterComponent = ({ supabase }: { supabase: SupabaseClient }) => {
       >
         <div className="space-y-6">
           <div className="flex flex-col items-center justify-center space-y-2">
-            <p className="text-white text-center font-medium">
+            <label
+              htmlFor="username"
+              className="sr-only text-white text-center font-medium"
+            >
+              Nombre de usuario
+            </label>
+            <input
+              type="text"
+              placeholder="Escribi tu nombre de usuario"
+              name="username"
+              required
+              className="w-[100%] bg-gray-900 py-3 rounded-xl px-4 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-gray-400 text-white"
+            />
+          </div>
+          <div className="flex flex-col items-center justify-center space-y-2">
+            <label
+              htmlFor="email"
+              className="sr-only text-white text-center font-medium"
+            >
               Correo electronico
-            </p>
+            </label>
+
             <input
               type="email"
               placeholder="Escribi tu correo electronico"
@@ -65,7 +119,13 @@ const RegisterComponent = ({ supabase }: { supabase: SupabaseClient }) => {
           </div>
 
           <div className="flex flex-col items-center justify-center space-y-2">
-            <p className="text-white text-center font-medium">Contraseña</p>
+            <label
+              htmlFor="password"
+              className="sr-only text-white text-center font-medium"
+            >
+              Contraseña
+            </label>
+
             <input
               type="password"
               placeholder="Contraseña"
@@ -75,9 +135,13 @@ const RegisterComponent = ({ supabase }: { supabase: SupabaseClient }) => {
             />
           </div>
           <div className="flex flex-col items-center justify-center space-y-2">
-            <p className="text-white text-center font-medium">
+            <label
+              htmlFor="repeatPassword"
+              className="sr-only text-white text-center font-medium"
+            >
               Repetir contraseña
-            </p>
+            </label>
+
             <input
               type="password"
               placeholder="Repetir contraseña"
