@@ -1,4 +1,5 @@
 import { SupabaseClient } from "@supabase/supabase-js";
+import Link from "next/link";
 import { useActionState } from "react";
 import { ImSpinner9 } from "react-icons/im";
 
@@ -30,7 +31,9 @@ const RegisterComponent = ({ supabase }: { supabase: SupabaseClient }) => {
         );
 
         if (authError) {
-          return { error: authError.message || "Error al registrar usuario" };
+          return {
+            error: "Error al registrar usuario, intentelo de nuevo más tarde",
+          };
         }
 
         // Aqui verifico si se creo un usuario
@@ -59,7 +62,7 @@ const RegisterComponent = ({ supabase }: { supabase: SupabaseClient }) => {
   );
   return (
     <section className="flex flex-col w-[80%] min-w-80 max-w-md lg:max-w-lg xl:max-w-xl items-center bg-[#131212] p-8 rounded-3xl mx-auto min-h-[500px] border border-gray-700">
-      {state?.success && (
+      {state?.success && !isPending && (
         <div className="w-full bg-green-500 text-white p-4 rounded-2xl text-center my-4">
           {state.success}
         </div>
@@ -70,7 +73,7 @@ const RegisterComponent = ({ supabase }: { supabase: SupabaseClient }) => {
         </div>
       )}
       {isPending && (
-        <div className="w-full bg-yellow-500 text-white p-4 rounded-2xl text-center my-4">
+        <div className="w-full flex justify-center items-center text-white p-4 rounded-2xl text-center my-4">
           <ImSpinner9 size={32} className="animate-spin" />
         </div>
       )}
@@ -159,12 +162,14 @@ const RegisterComponent = ({ supabase }: { supabase: SupabaseClient }) => {
         </div>
       </form>
       <div className="mt-4 text-[1.2rem]">
-        <p>
-          ¿Ya estás registrado? 
-          <button className="text-blue-400 cursor-pointer font-bold">
-            Inicia sesión
-          </button>
-        </p>
+        <Link href="/login">
+          <p>
+            ¿Ya estás registrado? 
+            <button className="text-blue-400 cursor-pointer font-bold">
+              Inicia sesión
+            </button>
+          </p>
+        </Link>
       </div>
     </section>
   );

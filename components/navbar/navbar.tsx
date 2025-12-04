@@ -157,7 +157,9 @@ const NavBar = () => {
             <span className="text-[1.2rem] font-medium">Contacto</span>
           </li>
         </ul>
-
+        <div>
+          <p>{user?.user_metadata.display_name}</p>
+        </div>
         <div className="flex justify-center items-center">
           {user === null ? (
             <Link

@@ -8,10 +8,22 @@ import Stage4Daily from "./stages/stage4";
 import Stage5Daily from "./stages/stage5";
 import { useDailyStore } from "@/store/daily-store";
 import { useAnimeTitles } from "@/hooks/useAnimeTitles";
-const DailyGame = ({ animes }: { animes: AnimeDaily[] }) => {
-  const { GameNumber } = useDailyStore();
+import { useEffect } from "react";
+const DailyGame = ({
+  animes,
+  current_stage,
+}: {
+  animes: AnimeDaily[];
+  current_stage: number;
+}) => {
+  const { GameNumber, setGameNumber } = useDailyStore();
 
   useAnimeTitles();
+
+  useEffect(() => {
+    setGameNumber(current_stage);
+  }, [current_stage, setGameNumber]);
+
   //STAGE 1
   const stage1_img_url = animes[0].image_url;
   const stage1_title = animes[0].title;

@@ -7,11 +7,7 @@ import { createClient } from "@/lib/supabase/server";
 
   if (!code) {
     console.log("Codigo no encontrado")
-    setTimeout(() => {
-      return NextResponse.redirect(`${requestURL.origin}/auth/error`)
-    }, 120000)
-    return
-    // return NextResponse.redirect(`${requestURL.origin}/auth/error`)
+      return NextResponse.redirect(`${requestURL.origin}/auth/error?message=code_not_found`)
   }
 
   const supabase = await createClient()
