@@ -4,17 +4,21 @@ import AnimeAllTitlesMenu from "@/components/animeAllTitlesMenu/animeAllTitlesMe
 import ReactPlayer from "react-player";
 import { useEffect, useRef, useState } from "react";
 import { useDailyStore } from "@/store/daily-store";
-import next from "next";
+import { DailyProgressType, useDailyProgress } from "@/hooks/useDailyProgress";
 
-const Stage3Daily = ({
+const Stage3_4Daily = ({
   title,
+  type_stat,
   url_video,
   next_stage,
 }: {
   title: string;
+  type_stat: DailyProgressType;
   url_video: string;
   next_stage: number;
 }) => {
+  // Traemos el hook para poder updatear en la base de datos
+  const { updateStat } = useDailyProgress();
   // Traer funcion para guardar estado
 
   const { setGameNumber } = useDailyStore();
@@ -95,9 +99,13 @@ const Stage3Daily = ({
 
   const handleUserGuess = (guess: string) => {
     if (guess.toLowerCase() === title.toLowerCase()) {
+      // Actualizamos la estadistica en la base de datos
+      updateStat(type_stat, true, next_stage);
       setIsCorrect(true);
       handleVideoEnd();
     } else {
+      // Actualizamos la estadistica en la base de datos
+      updateStat(type_stat, false, next_stage);
       setIsCorrect(false);
     }
   };
@@ -106,7 +114,7 @@ const Stage3Daily = ({
   return (
     <section className=" w-[100%] h-full">
       <h2 className=" my-4 text-2xl font-bold text-white mb-4 text-center">
-        Adivinar el anime por el opening.
+        Adivinar el anime por el {type_stat === "opening_ok" ? "opening" : "ending"}
       </h2>
 
       {isReady === true ? (
@@ -170,4 +178,4 @@ const Stage3Daily = ({
   );
 };
 
-export default Stage3Daily;
+export default Stage3_4Daily;

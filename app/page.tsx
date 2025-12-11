@@ -21,13 +21,13 @@ export default async function Home() {
       <section className="flex gap-8 flex-wrap justify-center py-8">
         <CardIndex
           title="Juego diario"
-          description="Juego diario, todos los juegos disponibles del sitio en un solo lugar, dentro de esta categoria hay un unico juego que no se puede jugar fuera del juego diario."
+          description="Juego diario, todos los juegos disponibles del sitio en un solo lugar, aca cuentan las estadisticas de cada juego."
           Icon={FaGamepad}
           href="daily"
         />
         <CardIndex
           title="All In One Infinito"
-          description="Es como el juego diario sin el juego especial que hay dentro de el, rondas infinitas."
+          description="Es como el juego diario, pero con rondas infinitas."
           Icon={BsInfinity}
           href="allinone"
         />

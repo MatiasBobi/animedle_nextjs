@@ -39,7 +39,7 @@ import { createClient } from "@/lib/supabase/server";
           .insert({
             user_id: userId,
             user_name: session.user.user_metadata?.display_name || 'USER_NOT_FOUND',
-
+            last_daily_table: new Date().toISOString(),
           })
 
         if (insertError) {

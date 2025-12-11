@@ -3,12 +3,15 @@
 import { AnimeDaily } from "@/types/daily_types";
 import Stage1Daily from "./stages/stage1";
 import Stage2Daily from "./stages/stage2";
-import Stage3Daily from "./stages/stage3";
-import Stage4Daily from "./stages/stage4";
+import Stage3Daily from "./stages/stage3_4";
+
 import Stage5Daily from "./stages/stage5";
 import { useDailyStore } from "@/store/daily-store";
 import { useAnimeTitles } from "@/hooks/useAnimeTitles";
 import { useEffect } from "react";
+import { getBrowserSupabase } from "@/lib/supabase/client";
+import Stage3_4Daily from "./stages/stage3_4";
+
 const DailyGame = ({
   animes,
   current_stage,
@@ -45,26 +48,35 @@ const DailyGame = ({
   const renderStage = () => {
     switch (GameNumber) {
       case 1:
-        return <Stage1Daily title={stage1_title} images={stage1_img_url} />;
+        return (
+          <Stage1Daily
+            title={stage1_title}
+            images={stage1_img_url}
+            type_stat="image_ok"
+          />
+        );
       case 2:
         return (
           <Stage2Daily
             description={stage2_sypnosis || ""}
             title={stage2_title}
+            type_stat="description_ok"
           />
         );
       case 3:
         return (
-          <Stage3Daily
+          <Stage3_4Daily
             title={stage3_title}
+            type_stat={"opening_ok"}
             url_video={opening_url || ""}
             next_stage={4}
           />
         );
       case 4:
         return (
-          <Stage3Daily
+          <Stage3_4Daily
             title={stage4_title}
+            type_stat={"ending_ok"}
             url_video={ending_url || ""}
             next_stage={5}
           />

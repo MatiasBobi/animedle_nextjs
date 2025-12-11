@@ -1,9 +1,24 @@
 import { useState } from "react";
 import { useDailyStore } from "@/store/daily-store";
 import AnimeAllTitlesMenu from "@/components/animeAllTitlesMenu/animeAllTitlesMenu";
+import { DailyProgressType, useDailyProgress } from "@/hooks/useDailyProgress";
 
-const Stage1Daily = ({ images, title }: { images: string; title: string }) => {
+const Stage1Daily = ({
+  images,
+  title,
+  type_stat,
+}: {
+  images: string;
+  title: string;
+  type_stat: DailyProgressType;
+}) => {
+  // Traemos el hook para poder updatear en la base de datos
+  const { updateStat } = useDailyProgress();
+
+  // State para el numero de juego
   const { setGameNumber } = useDailyStore();
+
+  // Estados para el juego
   const [incorrectAttempts, setIncorrectAttempts] = useState(1);
   const [individualPiece, setIndividualPiece] = useState([
     true,
@@ -14,7 +29,6 @@ const Stage1Daily = ({ images, title }: { images: string; title: string }) => {
     false,
   ]);
   const [isCorrect, setIsCorrect] = useState<boolean | string>("no_respondido");
-  const totalPieces = 6;
 
   const handleUserGuess = (userGuess: string) => {
     if (isCorrect === true || incorrectAttempts >= 6) return;
@@ -22,6 +36,7 @@ const Stage1Daily = ({ images, title }: { images: string; title: string }) => {
     // Aca chequeamos si es correcto lo que el usuario ingresa
     if (userGuess.toLowerCase().trim() === title.toLowerCase().trim()) {
       setIndividualPiece([true, true, true, true, true, true]);
+      updateStat(type_stat, true, 2);
       setIsCorrect(true);
     } else {
       // Lógica para intento incorrecto
@@ -35,6 +50,7 @@ const Stage1Daily = ({ images, title }: { images: string; title: string }) => {
       });
 
       if (newAttempts === 6) {
+        updateStat(type_stat, false, 2);
         setIsCorrect(false);
       }
     }

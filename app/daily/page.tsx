@@ -6,14 +6,24 @@ const DailyPage = async () => {
 
   // Traemos el usuario actual
   const user = await (await supabase).auth.getUser();
+  const userId = user?.data?.user?.id;
 
-  // Traemos todos los animes diarios.
+  if (!userId) {
+    return (
+      <main className="flex flex-col gap-4 h-screen">
+        <div className="flex flex-col gap-4 items-center justify-center">
+          <p className="text-2xl text-red-500">Usuario no autenticado</p>
+        </div>
+      </main>
+    );
+  }
+
+  // Traemos todos los animes diarios
   const { data: dailyAnimes, error: dailyAnimesError } = await (await supabase)
     .from("anime_daily")
     .select("*");
 
-  // Si hay algun problema, mostramos un error.
-  if (dailyAnimesError) {
+  if (dailyAnimesError || !dailyAnimes || dailyAnimes.length === 0) {
     return (
       <main className="flex flex-col gap-4 h-screen">
         <div className="flex flex-col gap-4 items-center justify-center">
@@ -25,16 +35,65 @@ const DailyPage = async () => {
     );
   }
 
-  // Traemos la data del usuario para chequear el ultimo dia que jugo y si ya jugo en el dia comprobar si ya lo completo.
-  const { data: DailyUserData } = await (await supabase)
+  // Obtener la fecha del anime diario actual
+  const dailyAnimeDate = new Date(dailyAnimes[0].display_date)
+    .toISOString()
+    .slice(0, 10);
+
+  //  Obtener los datos del usuario
+  let { data: DailyUserData } = await (await supabase)
     .from("user_data")
     .select("*")
+    .eq("user_id", userId)
     .single();
 
-  // Extraemos el stage actual que tiene almacenado el usuario en la tabla.
-  const current_stage = DailyUserData?.current_stage;
-  // SI el jugador ya termino el juego, devolvemos lo siguiente
-  if (DailyUserData?.daily_completed) {
+  // Si no existe el registro, lo vamos a crear
+  if (!DailyUserData) {
+    const { data: newUserData } = await (
+      await supabase
+    )
+      .from("user_data")
+      .insert({
+        user_id: userId,
+        last_daily_table: new Date().toISOString(),
+        current_stage: 1,
+        daily_completed: false,
+      })
+      .select("*")
+      .single();
+
+    DailyUserData = newUserData;
+  }
+
+  // Aca vamos a verificar si necesitamos actualizar o resetear el progreso del usuario
+  const userLastDailyDate = new Date(DailyUserData.last_daily_table)
+    .toISOString()
+    .slice(0, 10);
+
+  // Si la fecha del usuario es anterior al anime diario actual, reseteamos
+  if (userLastDailyDate < dailyAnimeDate) {
+    const { data: updatedData } = await (
+      await supabase
+    )
+      .from("user_data")
+      .update({
+        last_daily_table: new Date().toISOString(),
+        current_stage: 1,
+        daily_completed: false,
+      })
+      .eq("user_id", userId)
+      .select("*")
+      .single();
+
+    DailyUserData = updatedData!;
+  }
+
+  // Después de todas las actualizaciones, verificar si puede jugar
+  const currentUserDate = new Date(DailyUserData.last_daily_table)
+    .toISOString()
+    .slice(0, 10);
+
+  if (currentUserDate >= dailyAnimeDate && DailyUserData.daily_completed) {
     return (
       <main className="flex flex-col gap-4 h-screen">
         <div className="flex flex-col gap-4 items-center justify-center">
@@ -45,39 +104,13 @@ const DailyPage = async () => {
       </main>
     );
   }
-
-  // Vamos a crear las fechas para poder comparar si la fecha que tiene registrada el usuario en su user_data sea menor que la de los anime daily. Vamos a comparar con getTime() Ya que la fecha del anime_daily es a las 12m en punto osea:
-  // 2025-12-04 00:00:00+00 <--------- FECHA DE EJEMPLO de la fecha de los animes diarios.
-  // 2025-12-02 20:58:55.989+00 <--------- FECHA DE EJEMPLO de la ultima vez que jugo el usuario.
-  // Si la fecha del usuario es menor a la de la fecha de los animes diarios, debe dejar jugar el juego.
-
-  const dailyAnimeDate = new Date(dailyAnimes[0].display_date).getTime();
-  const userLastDailyDate = new Date(DailyUserData?.last_daily_table).getTime();
-
-  if (userLastDailyDate >= dailyAnimeDate && DailyUserData?.daily_completed) {
-    return (
-      <main className="flex flex-col gap-4 h-screen">
-        <div className="flex flex-col gap-4 items-center justify-center">
-          <p className="text-2xl text-red-500">
-            Ya has completado el juego diario
-          </p>
-        </div>
-      </main>
-    );
-  }
-
-  const { error } = await (
-    await supabase
-  )
-    .from("user_data")
-    .update({
-      last_daily_table: new Date().toISOString(),
-    })
-    .eq("user_id", user?.data?.user?.id);
 
   return (
     <main className="flex flex-col gap-4 h-screen">
-      <DailyGame animes={dailyAnimes || []} current_stage={current_stage} />
+      <DailyGame
+        animes={dailyAnimes}
+        current_stage={DailyUserData.current_stage}
+      />
     </main>
   );
 };

@@ -1,15 +1,21 @@
 /* El stage 2 consiste en adivinar el anime por su descripcion */
 
 import AnimeAllTitlesMenu from "@/components/animeAllTitlesMenu/animeAllTitlesMenu";
+import { DailyProgressType, useDailyProgress } from "@/hooks/useDailyProgress";
 import { useDailyStore } from "@/store/daily-store";
 import { useState, useEffect } from "react";
 const Stage2Daily = ({
   description,
   title,
+  type_stat,
 }: {
   description: string;
   title: string;
+  type_stat: DailyProgressType;
 }) => {
+  // Traemos el hook para poder updatear en la base de datos
+  const { updateStat } = useDailyProgress();
+
   const { setGameNumber } = useDailyStore();
 
   const [descriptionAnime, setDescriptionAnime] = useState<string>(description);
@@ -35,8 +41,10 @@ const Stage2Daily = ({
   const handleGuess = (userGuess: string) => {
     setAnswered(true);
     if (userGuess.toLowerCase() === title.toLowerCase()) {
+      updateStat(type_stat, true, 3);
       setIsCorrect(true);
     } else {
+      updateStat(type_stat, false, 3);
       setIsCorrect(false);
     }
   };
