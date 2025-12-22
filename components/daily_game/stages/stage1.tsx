@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDailyStore } from "@/store/daily-store";
 import AnimeAllTitlesMenu from "@/components/animeAllTitlesMenu/animeAllTitlesMenu";
 import { DailyProgressType, useDailyProgress } from "@/hooks/useDailyProgress";
@@ -7,16 +7,22 @@ const Stage1Daily = ({
   images,
   title,
   type_stat,
+  game_status,
+  type_game,
+  fnChangeImageInfiniteMode,
 }: {
   images: string;
   title: string;
-  type_stat: DailyProgressType;
+  type_stat?: DailyProgressType;
+  game_status?: string;
+  type_game: "daily" | "infinite";
+  fnChangeImageInfiniteMode?: (isAnswered: boolean) => void;
 }) => {
   // Traemos el hook para poder updatear en la base de datos
   const { updateStat } = useDailyProgress();
 
   // State para el numero de juego
-  const { setGameNumber } = useDailyStore();
+  const { setGameNumber, updateStepInfo } = useDailyStore();
 
   // Estados para el juego
   const [incorrectAttempts, setIncorrectAttempts] = useState(1);
@@ -30,13 +36,20 @@ const Stage1Daily = ({
   ]);
   const [isCorrect, setIsCorrect] = useState<boolean | string>("no_respondido");
 
+  useEffect(() => {
+    setIncorrectAttempts(1);
+    setIndividualPiece([true, false, false, false, false, false]);
+  }, [title]);
   const handleUserGuess = (userGuess: string) => {
     if (isCorrect === true || incorrectAttempts >= 6) return;
 
     // Aca chequeamos si es correcto lo que el usuario ingresa
     if (userGuess.toLowerCase().trim() === title.toLowerCase().trim()) {
       setIndividualPiece([true, true, true, true, true, true]);
-      updateStat(type_stat, true, 2);
+      if (type_game === "daily") {
+        updateStepInfo(0, 1);
+        updateStat(type_stat, true, 2, false, game_status);
+      }
       setIsCorrect(true);
     } else {
       // Lógica para intento incorrecto
@@ -50,9 +63,22 @@ const Stage1Daily = ({
       });
 
       if (newAttempts === 6) {
-        updateStat(type_stat, false, 2);
+        if (type_game === "daily") {
+          updateStepInfo(0, 0);
+          updateStat(type_stat, false, 2, false, game_status);
+        }
         setIsCorrect(false);
       }
+    }
+  };
+  const handleContinue = () => {
+    if (type_game === "daily") {
+      setGameNumber(2);
+    }
+    if (type_game === "infinite") {
+      setIsCorrect("no_respondido");
+      setIndividualPiece([true, false, false, false, false, false]);
+      fnChangeImageInfiniteMode?.(true);
     }
   };
 
@@ -92,7 +118,7 @@ const Stage1Daily = ({
           <>
             <p>El anime es: {title}</p>
             <button
-              onClick={() => setGameNumber(2)}
+              onClick={() => handleContinue()}
               className="p-4 bg-blue-600 cursor-pointer hover:bg-blue-700 text-white font-semibold rounded-xl transition-colors"
             >
               Continuar

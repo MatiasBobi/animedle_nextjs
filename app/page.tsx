@@ -26,29 +26,17 @@ export default async function Home() {
           href="daily"
         />
         <CardIndex
-          title="All In One Infinito"
-          description="Es como el juego diario, pero con rondas infinitas."
-          Icon={BsInfinity}
-          href="allinone"
-        />
-
-        <CardIndex
           title="Images"
           description="Adivina el anime por una imagen."
           Icon={BsCardImage}
           href="animeimages"
         />
+
         <CardIndex
-          title="Videos"
-          description="Adivina el anime por un video."
-          Icon={BsCameraVideo}
-          href="animevideos"
-        />
-        <CardIndex
-          title="Animedle"
-          description="Wordle estilo anime, juego donde adivinar el anime según las letras que vayas adivinando."
+          title="Ahorcado"
+          description="Juego donde adivinar el anime según las letras que vayas adivinando."
           Icon={BsFillKeyboardFill}
-          href="animedle"
+          href="ahorcado"
         />
       </section>
     </main>

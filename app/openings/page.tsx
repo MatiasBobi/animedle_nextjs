@@ -1,11 +1,11 @@
 "use client";
+
 import { getAnimeRandom } from "@/lib/utils/getRandomAnime";
 import Stage3_4Daily from "@/components/daily_game/stages/stage3_4";
 import { useEffect, useState } from "react";
 import { useAnimeTitles } from "@/hooks/useAnimeTitles";
-import Stage1Daily from "@/components/daily_game/stages/stage1";
 
-const AnimeImagesPage = () => {
+const OpeningsTrivia = () => {
   const [anime, setAnime] = useState<any | null>(null);
   const [changeAnimeCountdown, setChangeAnimeCountdown] = useState(20);
 
@@ -29,8 +29,8 @@ const AnimeImagesPage = () => {
     return () => clearInterval(interval);
   }, [changeAnimeCountdown]);
 
-  const handleChangeAnime = async (isAnswered: boolean) => {
-    if (changeAnimeCountdown > 0 && !isAnswered) {
+  const handleChangeAnime = async () => {
+    if (changeAnimeCountdown > 0) {
       return;
     }
     const animeRandom = await getAnimeRandom();
@@ -47,36 +47,35 @@ const AnimeImagesPage = () => {
   if (!anime) {
     return <p>Cargando...</p>;
   }
+
   return (
     <main className="flex flex-col items-center justify-center gap-2 w-full h-full">
-      <section className="flex flex-wrap justify-center p-2">
-        <div className="mt-4">
-          <button
-            className={`${
-              changeAnimeCountdown > 0 ? "bg-red-500" : "bg-green-500"
-            } text-white px-4 py-2 rounded-md cursor-pointer`}
-            disabled={changeAnimeCountdown > 0}
-            onClick={() => handleChangeAnime(false)}
-          >
-            Cambiar anime
-          </button>
-          <p>
-            {changeAnimeCountdown > 0
-              ? `Espera ${changeAnimeCountdown} segundos`
-              : ""}
-          </p>
-        </div>
-      </section>
-      <section className="w-[90%] h-64 md:w-[100%] md:h-96">
-        <Stage1Daily
-          images={anime.image_url}
+      <div className="mt-4">
+        <button
+          className={`${
+            changeAnimeCountdown > 0 ? "bg-red-500" : "bg-green-500"
+          } text-white px-4 py-2 rounded-md cursor-pointer`}
+          disabled={changeAnimeCountdown > 0}
+          onClick={handleChangeAnime}
+        >
+          Cambiar anime
+        </button>
+        <p>
+          {changeAnimeCountdown > 0
+            ? `Espera ${changeAnimeCountdown} segundos`
+            : ""}
+        </p>
+      </div>
+      <section className="flex flex-col  gap-4 w-90 h-64 md:w-180 md:h-96">
+        <Stage3_4Daily
           title={anime.title}
+          url_video={anime.openings || ""}
           type_game="infinite"
-          fnChangeImageInfiniteMode={handleChangeAnime}
+          type_stat="opening_ok"
         />
       </section>
     </main>
   );
 };
 
-export default AnimeImagesPage;
+export default OpeningsTrivia;

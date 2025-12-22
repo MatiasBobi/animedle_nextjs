@@ -8,15 +8,17 @@ const Stage2Daily = ({
   description,
   title,
   type_stat,
+  gameCurrentStage_name,
 }: {
   description: string;
   title: string;
   type_stat: DailyProgressType;
+  gameCurrentStage_name: string;
 }) => {
   // Traemos el hook para poder updatear en la base de datos
   const { updateStat } = useDailyProgress();
 
-  const { setGameNumber } = useDailyStore();
+  const { setGameNumber, updateStepInfo } = useDailyStore();
 
   const [descriptionAnime, setDescriptionAnime] = useState<string>(description);
   const [isCorrect, setIsCorrect] = useState<boolean | string>("no_respondido");
@@ -41,10 +43,12 @@ const Stage2Daily = ({
   const handleGuess = (userGuess: string) => {
     setAnswered(true);
     if (userGuess.toLowerCase() === title.toLowerCase()) {
-      updateStat(type_stat, true, 3);
+      updateStepInfo(1, 1);
+      updateStat(type_stat, true, 3, false, gameCurrentStage_name);
       setIsCorrect(true);
     } else {
-      updateStat(type_stat, false, 3);
+      updateStepInfo(1, 0);
+      updateStat(type_stat, false, 3, false, gameCurrentStage_name);
       setIsCorrect(false);
     }
   };

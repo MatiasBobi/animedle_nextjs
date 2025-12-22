@@ -30,7 +30,7 @@ const AnimeAllTitlesMenu = ({
 
   return (
     <div className="flex flex-col justify-center items-center relative">
-      <div className="relative w-80">
+      <div className="relative w-[100%]">
         <input
           placeholder="Adivina el anime..."
           value={userGuess}
