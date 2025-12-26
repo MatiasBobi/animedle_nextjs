@@ -5,9 +5,11 @@ import { useState } from "react";
 const AnimeAllTitlesMenu = ({
   onUserGuess,
   isCorrect,
+  isTitleAvailable = true,
 }: {
   onUserGuess: (userGuess: string) => void;
   isCorrect: boolean | string;
+  isTitleAvailable?: boolean;
 }) => {
   const [userGuess, setUserGuess] = useState<string>("");
   const [isExpansible, setIsExpansible] = useState<boolean>(false);
@@ -67,7 +69,7 @@ const AnimeAllTitlesMenu = ({
         )}
       </div>
 
-      {isExpansible && (
+      {isExpansible && isTitleAvailable && (
         <div className="max-h-40 w-80 overflow-y-auto absolute bottom-0 translate-y-full md:-translate-y-1 md:bottom-full border-gray-600 rounded-lg shadow-lg z-50 transform [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-gray-300">
           {filterAnimeTitlesByUserGuess.map((animeTitle, index) => (
             <div

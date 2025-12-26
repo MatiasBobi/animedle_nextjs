@@ -1,7 +1,11 @@
-import React from "react";
+import AnimeVideos from "@/components/animeVideos/animeVideos";
 
 const EndingsTrivia = () => {
-  return <div>EndingsTrivia</div>;
+  return (
+    <main>
+      <AnimeVideos type_game="endings" />
+    </main>
+  );
 };
 
 export default EndingsTrivia;

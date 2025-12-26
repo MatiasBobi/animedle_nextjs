@@ -13,6 +13,7 @@ const Stage3_4Daily = ({
   next_stage,
   game_status,
   type_game,
+  fnChangeAnimeOnInfiniteMode,
 }: {
   title: string;
   type_stat?: DailyProgressType;
@@ -20,6 +21,7 @@ const Stage3_4Daily = ({
   next_stage?: number;
   game_status?: string;
   type_game: "daily" | "infinite";
+  fnChangeAnimeOnInfiniteMode?: (isCorrect: boolean) => void;
 }) => {
   // Traemos el hook para poder updatear en la base de datos
   const { updateStat } = useDailyProgress();
@@ -37,9 +39,9 @@ const Stage3_4Daily = ({
   ]);
   const [isCorrect, setIsCorrect] = useState<boolean | string>("no_respondido");
 
-  // Manejo de errores y fallback de Youtube
-  const [videoError, setVideoError] = useState(false);
-  const [useFallback, setUseFallback] = useState(false);
+  // Manejo de errores y fallback de  los videos
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [showPlayer, setShowPlayer] = useState(false);
 
   const intervalRef = useRef<NodeJS.Timeout | null>(null); // Guardamos la referencia de los 2 intervalos para poder cortalos cuando sea necesario
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -66,6 +68,7 @@ const Stage3_4Daily = ({
 
   const handleVideoEnd = () => {
     gameEndedRef.current = true;
+
     setIndividualPiece([false, false, false, false, false, false]);
     // Limpiamos todos los intervalos
     if (intervalRef.current) {
@@ -78,7 +81,7 @@ const Stage3_4Daily = ({
     }
   };
 
-  /*useEffect(() => {
+  useEffect(() => {
     // Limpiamos todo si el componente cambia
 
     gameEndedRef.current = false;
@@ -95,8 +98,9 @@ const Stage3_4Daily = ({
     // Reiniciar estados
     setIndividualPiece([false, false, false, false, false, false]);
     setIsCorrect("no_respondido");
+
     setIsReady(false);
-  }, [title, url_video]);*/
+  }, [title, url_video]);
 
   const handleReady = () => {
     setIsReady(true);
@@ -124,9 +128,11 @@ const Stage3_4Daily = ({
   const handleContinue = () => {
     if (type_game === "daily") {
       setGameNumber(next_stage);
+      setIsCorrect("no_respondido");
     }
     if (type_game === "infinite") {
       setIsCorrect("no_respondido");
+      fnChangeAnimeOnInfiniteMode?.(true);
       setIndividualPiece([false, false, false, false, false, true]);
     }
   };
@@ -156,12 +162,42 @@ const Stage3_4Daily = ({
             className="absolute top-0 left-0"
             width="100%"
             height="100%"
-            src="https://v.animethemes.moe/BangDreamAveMujica-OP1.webm"
-            playing={isReady}
+            playsInline
+            src={url_video}
+            playing={isPlaying}
             controls={false}
+            onEnded={() => {
+              handleVideoEnd();
+              setIsPlaying(false);
+            }}
+            preload="auto"
             loop={false}
-            onEnded={handleVideoEnd}
+            onReady={() => {
+              setShowPlayer(true);
+              setIsPlaying(true);
+            }}
+            onWaiting={() => {
+              console.log("buffering…");
+              // Puedes mostrar un mensaje de carga aquí
+            }}
+            onError={(e) => {
+              console.error("video error", e);
+              // Puedes gestionar errores aquí
+            }}
+            onLoad={() => setIsReady(true)}
+            config={{
+              file: {
+                attributes: {
+                  preload: "auto",
+                },
+              },
+            }}
           />
+          {!showPlayer && (
+            <div className="absolute inset-0 flex items-center justify-center bg-[#1E293B] text-white">
+              Cargando opening…
+            </div>
+          )}
 
           {isReady && isCorrect === "no_respondido" && (
             <div className="absolute inset-0 grid grid-cols-2 grid-rows-3 z-20 pointer-events-none">

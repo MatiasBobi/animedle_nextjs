@@ -45,7 +45,14 @@ const AnimeImagesPage = () => {
   };
 
   if (!anime) {
-    return <p>Cargando...</p>;
+    return (
+      <main className="min-h-screen w-full flex items-center justify-center ">
+        <section className="flex flex-col items-center gap-4 p-6 rounded-2xl bg-slate-700/60 backdrop-blur-md shadow-lg">
+          <div className="w-10 h-10 border-4 border-white/30 border-t-white rounded-full animate-spin" />
+          <p className="text-white text-lg font-medium">Cargando anime...</p>
+        </section>
+      </main>
+    );
   }
   return (
     <main className="flex flex-col items-center justify-center gap-2 w-full h-full">

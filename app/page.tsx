@@ -1,14 +1,6 @@
-import AuthButtonServer from "@/components/auth/auth-button-server";
 import CardIndex from "@/components/cardIndex/cardIndex";
-import NavBar from "@/components/navbar/navbar";
-import { createClient } from "@/lib/supabase/server";
-import { useDailyStore } from "@/store/daily-store";
-import {
-  BsFillKeyboardFill,
-  BsInfinity,
-  BsCardImage,
-  BsCameraVideo,
-} from "react-icons/bs";
+import { BsFillKeyboardFill, BsCardImage } from "react-icons/bs";
+import { IoIosVideocam } from "react-icons/io";
 import { FaGamepad } from "react-icons/fa6";
 
 export default async function Home() {
@@ -31,7 +23,18 @@ export default async function Home() {
           Icon={BsCardImage}
           href="animeimages"
         />
-
+        <CardIndex
+          title="Openings"
+          description="Adivina el anime por un opening."
+          Icon={IoIosVideocam}
+          href="openings"
+        />
+        <CardIndex
+          title="Endings"
+          description="Adivina el anime por un ending."
+          Icon={IoIosVideocam}
+          href="endings"
+        />
         <CardIndex
           title="Ahorcado"
           description="Juego donde adivinar el anime según las letras que vayas adivinando."

@@ -38,6 +38,8 @@ const Stage1Daily = ({
 
   useEffect(() => {
     setIncorrectAttempts(1);
+    setIsCorrect("no_respondido");
+
     setIndividualPiece([true, false, false, false, false, false]);
   }, [title]);
   const handleUserGuess = (userGuess: string) => {

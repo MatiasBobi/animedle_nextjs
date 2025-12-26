@@ -6,10 +6,14 @@ import { useState } from "react";
 import { useDailyStore } from "@/store/daily-store";
 const Stage5Daily = ({
   title,
+  type_game,
   type_stat,
+  fnChangeAnimeAnimeOnInfiniteMode,
 }: {
   title: string;
-  type_stat: DailyProgressType;
+  type_game: "daily" | "infinite";
+  type_stat?: DailyProgressType;
+  fnChangeAnimeAnimeOnInfiniteMode?: () => void;
 }) => {
   // Funcion para actualizar la estadistica del usuario
   const { updateStat } = useDailyProgress();
@@ -33,7 +37,10 @@ const Stage5Daily = ({
   ]);
   const [isCorrect, setIsCorrect] = useState<boolean | string>("no_respondido");
   const [finishGame, setFinishGame] = useState<boolean>(false);
+  const [continueGame, setContinueGame] = useState<boolean>(false);
 
+  // COMPARAR BIEN EN MINUSCULA
+  // COMPARAR SIN SIMBOLOS
   const [attempts, setAttempts] = useState<number>(0);
 
   const title_with_spaces = title.toUpperCase().split(" ");
@@ -46,14 +53,18 @@ const Stage5Daily = ({
   const handleUserGuess = (guess: string) => {
     setVisibleLetter(titleLetters);
 
-    if (guess.toUpperCase() === title.toUpperCase()) {
+    if (guess.toLowerCase() === title.toLowerCase()) {
       setIsCorrect(true);
-      updateStepInfo(4, 1);
-      updateStat(type_stat, true, 1, true, "game5_status");
+      if (type_game === "daily") {
+        updateStepInfo(4, 1);
+        updateStat(type_stat, true, 1, true, "game5_status");
+      }
     } else {
       setIsCorrect(false);
-      updateStepInfo(4, 0);
-      updateStat(type_stat, false, 1, true, "game5_status");
+      if (type_game === "daily") {
+        updateStepInfo(4, 0);
+        updateStat(type_stat, false, 1, true, "game5_status");
+      }
     }
   };
 
@@ -67,6 +78,36 @@ const Stage5Daily = ({
       setAttempts(newAttempts);
       if (newAttempts >= 10) {
       }
+    }
+  };
+
+  const handleFinishOrContinue = () => {
+    if (isCorrect === "no_respondido") return;
+    if (type_game === "daily") {
+      setFinishGame(true);
+      return;
+    }
+    if (type_game === "infinite") {
+      setAttempts(1);
+      setIsCorrect("no_respondido");
+      setVisibleLetter([
+        "|",
+        "?",
+        "!",
+        "#",
+        "$",
+        "%",
+        "&",
+        "/",
+        "(",
+        ")",
+        "¡",
+        "¿",
+        "^",
+        "~",
+      ]);
+      fnChangeAnimeAnimeOnInfiniteMode?.();
+      return;
     }
   };
   if (finishGame) {
@@ -94,9 +135,9 @@ const Stage5Daily = ({
             ))}
           </div>
         ))}
-        {isCorrect !== "no_respondido" && (
+        {isCorrect !== "no_respondido" && type_game === "daily" && (
           <button
-            onClick={() => setFinishGame(true)}
+            onClick={() => handleFinishOrContinue()}
             className="bg-[#1c5cc4] cursor-pointer text-white font-bold px-4 py-2 rounded-md hover:bg-[#1e4583]"
           >
             Continuar
@@ -128,6 +169,14 @@ const Stage5Daily = ({
           );
         })}
       </div>
+      {type_game === "infinite" && isCorrect !== "no_respondido" && (
+        <button
+          onClick={() => handleFinishOrContinue()}
+          className="bg-[#1c5cc4] cursor-pointer text-white font-bold px-4 py-2 rounded-md hover:bg-[#1e4583]"
+        >
+          Continuar
+        </button>
+      )}
 
       <div className="text-white font-bold text-xl text-center">
         <span>
@@ -135,7 +184,11 @@ const Stage5Daily = ({
         </span>
       </div>
       {/* Adivinar el anime */}
-      <AnimeAllTitlesMenu onUserGuess={handleUserGuess} isCorrect={isCorrect} />
+      <AnimeAllTitlesMenu
+        isTitleAvailable={true}
+        onUserGuess={handleUserGuess}
+        isCorrect={isCorrect}
+      />
     </section>
   );
 };
