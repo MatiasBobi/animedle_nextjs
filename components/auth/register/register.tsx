@@ -47,7 +47,9 @@ const RegisterComponent = ({ supabase }: { supabase: SupabaseClient }) => {
         }
 
         if (authData.user.user_metadata.display_name === username) {
-          return { error: "El username ya esta utilizado." };
+          return {
+            error: "El username ya esta utilizado, intente con otro nuevo.",
+          };
         }
 
         if (authData.user.confirmed_at || authData.user.email_confirmed_at) {
