@@ -1,33 +1,12 @@
-"use client";
-
-import { useSearchParams } from "next/navigation";
+import ErrorContent from "@/components/auth/error/errorComponent";
+import { Suspense } from "react";
 
 export default function ErrorPage() {
-  const searchParams = useSearchParams();
-  const extract_message = searchParams.get("message");
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-900">
-      <div className="text-center">
-        <h1 className="text-2xl font-bold text-red-600 mb-4">Error</h1>
-        {extract_message === "code_not_found" && (
-          <p className="text-white">
-            No se ha encontrado el código de verificación. Por favor, inténtalo
-            de nuevo.
-          </p>
-        )}
-        {extract_message === "auth_failed" && (
-          <p className="text-white">
-            Ha ocurrido un error al autenticar tu cuenta. Por favor, inténtalo
-            de nuevo.
-          </p>
-        )}
-        {extract_message === "unexpected_error" && (
-          <p className="text-white">
-            Ha ocurrido un error inesperado. Por favor, inténtalo de nuevo.
-          </p>
-        )}
-      </div>
+      <Suspense fallback={<p className="text-white">Cargando error...</p>}>
+        <ErrorContent />
+      </Suspense>
     </div>
   );
 }

@@ -14,6 +14,7 @@ const RegisterComponent = ({ supabase }: { supabase: SupabaseClient }) => {
       if (password !== repit_password) {
         return { error: "Las contraseñas no coinciden" };
       }
+
       try {
         // Registrar usuario en Supabase Auth
         const { data: authData, error: authError } = await supabase.auth.signUp(
@@ -24,7 +25,8 @@ const RegisterComponent = ({ supabase }: { supabase: SupabaseClient }) => {
               data: {
                 display_name: username as string,
               },
-              emailRedirectTo: "http://localhost:3000/auth/callback",
+              emailRedirectTo:
+                "https://animedle-nextjs-git-dev-matias-bobis-projects.vercel.app/auth/callback",
             },
           }
         );
@@ -43,10 +45,6 @@ const RegisterComponent = ({ supabase }: { supabase: SupabaseClient }) => {
         // Verificamos si el usuario necesita el mail o si ya esta registrado.
         if (authData.user.identities && authData.user.identities.length === 0) {
           return { error: "El usuario ya está registrado" };
-        }
-
-        if (authData.user.user_metadata.display_name === username) {
-          return { error: "El username ya esta utilizado." };
         }
 
         if (authData.user.confirmed_at || authData.user.email_confirmed_at) {
@@ -97,11 +95,11 @@ const RegisterComponent = ({ supabase }: { supabase: SupabaseClient }) => {
               htmlFor="username"
               className="sr-only text-white text-center font-medium"
             >
-              Nombre de usuario
+              Nombre a mostrar
             </label>
             <input
               type="text"
-              placeholder="Escribi tu nombre de usuario"
+              placeholder="Escribi tu nombre a mostrar"
               name="username"
               required
               className="w-[100%] bg-gray-900 py-3 rounded-xl px-4 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-gray-400 text-white"
