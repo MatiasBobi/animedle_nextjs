@@ -1,57 +1,103 @@
 /* El stage 2 consiste en adivinar el anime por su descripcion */
 
-import { useState } from "react";
+import AnimeAllTitlesMenu from "@/components/animeAllTitlesMenu/animeAllTitlesMenu";
+import { DailyProgressType, useDailyProgress } from "@/hooks/useDailyProgress";
+import { useDailyStore } from "@/store/daily-store";
+import { useState, useEffect } from "react";
 const Stage2Daily = ({
   description,
   title,
+  type_stat,
+  gameCurrentStage_name,
 }: {
   description: string;
   title: string;
+  type_stat: DailyProgressType;
+  gameCurrentStage_name: string;
 }) => {
+  // Traemos el hook para poder updatear en la base de datos
+  const { updateStat } = useDailyProgress();
+
+  const { setGameNumber, updateStepInfo } = useDailyStore();
+
   const [descriptionAnime, setDescriptionAnime] = useState<string>(description);
-  const [userGuess, setUserGuess] = useState<string>("");
-  const [showHint, setShowHint] = useState("");
+  const [isCorrect, setIsCorrect] = useState<boolean | string>("no_respondido");
+  const [answered, setAnswered] = useState<boolean>(false);
 
   const cleanAnimeTitle = (str: string) => {
     return str.replace(/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?¿¡]/g, "");
   };
-  const isDescriptionHasTitle = description.includes(cleanAnimeTitle(title));
 
-  if (isDescriptionHasTitle) {
-    const shortDescriptionWithoutTitle = description.replace(
-      cleanAnimeTitle(title),
-      ""
-    );
-    setDescriptionAnime(shortDescriptionWithoutTitle);
-  }
-  const getRandomHint = () => {
-    const randomIndex = Math.floor(Math.random() * title.length);
-    return title[randomIndex];
+  useEffect(() => {
+    const isDescriptionHasTitle = description.includes(cleanAnimeTitle(title));
+
+    if (isDescriptionHasTitle) {
+      const shortDescriptionWithoutTitle = description.replace(
+        cleanAnimeTitle(title),
+        ""
+      );
+      setDescriptionAnime(shortDescriptionWithoutTitle);
+    }
+  }, [description, title]);
+
+  const handleGuess = (userGuess: string) => {
+    setAnswered(true);
+    if (userGuess.toLowerCase() === title.toLowerCase()) {
+      updateStepInfo(1, 1);
+      updateStat(type_stat, true, 3, false, gameCurrentStage_name);
+      setIsCorrect(true);
+    } else {
+      updateStepInfo(1, 0);
+      updateStat(type_stat, false, 3, false, gameCurrentStage_name);
+      setIsCorrect(false);
+    }
   };
 
-  const handleShowHint = () => {
-    setShowHint(`${title[0]}`);
-    
-  };
   return (
-    <>
-      <div className="flex flex-col gap-2 p-4 bg-[#1E293B] rounded-2xl h-108 overflow-y-auto [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar]:w-2">
-        <p>{descriptionAnime}...</p>
+    <section>
+      <h2 className="text-2xl font-bold text-white mb-4 text-center">
+        Adivina el anime por su sinopsis
+      </h2>
+      <div className="my-4 md:hidden block ">
+        <AnimeAllTitlesMenu onUserGuess={handleGuess} isCorrect={isCorrect} />
+      </div>
+      <div className="flex flex-col gap-2 p-4  bg-[#1E293B] rounded-2xl h-108 overflow-y-auto [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar]:w-2 ">
+        {answered === false ? (
+          <p className="transition-all duration-300 ease-in-out">
+            {descriptionAnime}...
+          </p>
+        ) : (
+          <div className="flex items-center h-full justify-center transition-all duration-500 ease-in-out opacity-90 animate-fadeIn ">
+            {isCorrect !== "no_respondido" && (
+              <div className="flex flex-col gap-2 p-4 rounded-2xl mt-4">
+                <p className="text-green-500 font-bold text-center">
+                  El anime es: {title}
+                </p>
+                <button
+                  onClick={() => {
+                    setGameNumber(3);
+                  }}
+                  className=" cursor-pointer h-12 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-colors"
+                >
+                  Continuar
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+      <div className="my-4">
+        {answered === false ? (
+          <p>Anime: {title?.[0]}</p>
+        ) : (
+          <p>Anime: {title}</p>
+        )}
+      </div>
 
+      <div className="hidden md:block">
+        <AnimeAllTitlesMenu onUserGuess={handleGuess} isCorrect={isCorrect} />
       </div>
-      <p className="mt-4">Anime: {showHint} </p>
-      <div className="mt-4 relative w-80">
-        <input
-          placeholder="Adivina el anime..."
-          value={userGuess}
-          onChange={(e) => setUserGuess(e.target.value)}
-          className="w-full h-16 bg-[#1E293B] rounded-2xl p-4 pr-28 text-white outline-none"
-        />
-        <button className="absolute right-2 cursor-pointer top-1/2 -translate-y-1/2 h-12 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-colors">
-          Adivinar
-        </button>
-      </div>
-    </>
+    </section>
   );
 };
 

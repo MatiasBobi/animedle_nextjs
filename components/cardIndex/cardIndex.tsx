@@ -22,7 +22,7 @@ const CardIndex = ({
       <p className="text-center px-8 text-gray-300 leading-relaxed">
         {description}
       </p>
-      <button className="px-8 py-4 bg-blue-400 text-white rounded-2xl font-semibold hover:bg-blue-500 transition-colors shadow-lg">
+      <button className=" cursor-pointer px-8 py-4 bg-blue-400 text-white rounded-2xl font-semibold hover:bg-blue-500 transition-colors shadow-lg">
         Ir a jugar
       </button>
     </Link>
