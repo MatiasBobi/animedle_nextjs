@@ -24,7 +24,8 @@ const RegisterComponent = ({ supabase }: { supabase: SupabaseClient }) => {
               data: {
                 display_name: username as string,
               },
-              emailRedirectTo: "http://localhost:3000/auth/callback",
+              emailRedirectTo:
+                "https://animedle-nextjs-git-dev-matias-bobis-projects.vercel.app/auth/callback",
             },
           }
         );
