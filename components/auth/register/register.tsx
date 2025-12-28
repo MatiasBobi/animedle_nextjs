@@ -14,7 +14,6 @@ const RegisterComponent = ({ supabase }: { supabase: SupabaseClient }) => {
       if (password !== repit_password) {
         return { error: "Las contraseñas no coinciden" };
       }
-
       try {
         // Registrar usuario en Supabase Auth
         const { data: authData, error: authError } = await supabase.auth.signUp(
@@ -44,6 +43,10 @@ const RegisterComponent = ({ supabase }: { supabase: SupabaseClient }) => {
         // Verificamos si el usuario necesita el mail o si ya esta registrado.
         if (authData.user.identities && authData.user.identities.length === 0) {
           return { error: "El usuario ya está registrado" };
+        }
+
+        if (authData.user.user_metadata.display_name === username) {
+          return { error: "El username ya esta utilizado." };
         }
 
         if (authData.user.confirmed_at || authData.user.email_confirmed_at) {

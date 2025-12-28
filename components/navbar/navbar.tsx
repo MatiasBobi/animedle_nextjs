@@ -8,7 +8,6 @@ import { FaEnvelope, FaHome, FaGamepad } from "react-icons/fa";
 import { FcBarChart } from "react-icons/fc";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { redirect } from "next/navigation";
-import { ToastContainer, toast } from "react-toastify";
 
 const NavBar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -26,7 +25,6 @@ const NavBar = () => {
       } = await client.auth.getUser();
       setUser(user);
 
-      // Vamos a estar escuchando los cambios de session.
       const {
         data: { subscription },
       } = client.auth.onAuthStateChange(async (event, session) => {
@@ -35,7 +33,7 @@ const NavBar = () => {
       });
 
       return () => {
-        subscription.unsubscribe(); // <--- Vamos a desuscribirnos cuando el componente se desmonte.
+        subscription.unsubscribe();
       };
     };
 
@@ -58,14 +56,22 @@ const NavBar = () => {
     <nav className="flex flex-row justify-between items-center md:p-0 py-6 px-4 bg-gradient-to-r from-gray-900 to-gray-800 border-b border-gray-700 md:border-none md:bg-[#171717] relative">
       {/* Boton menu mobile */}
 
-      <div className="md:hidden">
-        <button onClick={() => setIsOpen(!isOpen)}>
-          {isOpen ? (
-            <HiOutlineX className="text-white text-2xl cursor-pointer" />
-          ) : (
-            <GiHamburgerMenu className="text-white text-2xl cursor-pointer" />
-          )}
-        </button>
+      <div className="md:hidden flex items-center gap-4 justify-between w-full">
+        <div>
+          {" "}
+          <button onClick={() => setIsOpen(!isOpen)}>
+            {isOpen ? (
+              <HiOutlineX className="text-white text-2xl cursor-pointer" />
+            ) : (
+              <GiHamburgerMenu className="text-white text-2xl cursor-pointer" />
+            )}
+          </button>
+        </div>
+        <div>
+          <span className="text-white text-[1.2rem] font-medium">
+            {user?.user_metadata?.display_name}
+          </span>
+        </div>
       </div>
 
       {/* Menú mobile */}
@@ -80,33 +86,40 @@ const NavBar = () => {
           </div>
           <div className="h-full overflow-y-auto pb-4">
             <ul className="flex flex-col p-4 gap-2">
-              <li
-                className="flex items-center gap-4 text-white hover:bg-gray-700 rounded-xl px-4 py-4 transition-all duration-300 cursor-pointer group"
-                onClick={handleCloseMenu}
-              >
-                <FaHome className="text-blue-400 group-hover:text-blue-300 transition-colors" />
-                <span className="text-[1.2rem] font-medium">Inicio</span>
+              <li>
+                <Link
+                  href={"/"}
+                  className="flex items-center gap-4 text-white hover:bg-gray-700 rounded-xl px-4 py-4 transition-all duration-300 cursor-pointer group"
+                  onClick={handleCloseMenu}
+                >
+                  <FaHome className="text-blue-400 group-hover:text-blue-300 transition-colors" />
+
+                  <span className="text-[1.2rem] font-medium">Inicio</span>
+                </Link>
               </li>
-              <li
-                className="flex items-center gap-4 text-white hover:bg-gray-700 rounded-xl px-4 py-4 transition-all duration-300 cursor-pointer group"
-                onClick={handleCloseMenu}
-              >
-                <FaGamepad className="text-green-400 group-hover:text-green-300 transition-colors" />
-                <span className="text-[1.2rem] font-medium">Juego diario</span>
+              <li>
+                <Link
+                  href={"/daily"}
+                  className="flex items-center gap-4 text-white hover:bg-gray-700 rounded-xl px-4 py-4 transition-all duration-300 cursor-pointer group"
+                  onClick={handleCloseMenu}
+                >
+                  <FaGamepad className="text-green-400 group-hover:text-green-300 transition-colors" />
+                  <span className="text-[1.2rem] font-medium">
+                    Juego diario
+                  </span>
+                </Link>
               </li>
-              <li
-                className="flex items-center gap-4 text-white hover:bg-gray-700 rounded-xl px-4 py-4 transition-all duration-300 cursor-pointer group"
-                onClick={handleCloseMenu}
-              >
-                <FcBarChart className="text-purple-400 group-hover:text-purple-300 transition-colors" />
-                <span className="text-[1.2rem] font-medium">Estadísticas</span>
-              </li>
-              <li
-                className="flex items-center gap-4 text-white hover:bg-gray-700 rounded-xl px-4 py-4 transition-all duration-300 cursor-pointer group"
-                onClick={handleCloseMenu}
-              >
-                <FaEnvelope className="text-yellow-400 group-hover:text-yellow-300 transition-colors" />
-                <span className="text-[1.2rem] font-medium">Contacto</span>
+              <li>
+                <Link
+                  href={"/stats"}
+                  className="flex items-center gap-4 text-white hover:bg-gray-700 rounded-xl px-4 py-4 transition-all duration-300 cursor-pointer group"
+                  onClick={handleCloseMenu}
+                >
+                  <FcBarChart className="text-purple-400 group-hover:text-purple-300 transition-colors" />
+                  <span className="text-[1.2rem] font-medium">
+                    Estadísticas
+                  </span>
+                </Link>
               </li>
             </ul>
 
@@ -140,21 +153,35 @@ const NavBar = () => {
       {/* Menu > 768px desktop */}
       <div className="hidden md:flex md:justify-between md:items-center md:w-full md:h-14 md:px-2">
         <ul className="flex flex-row gap-4">
-          <li className="flex items-center gap-4 text-white hover:bg-gray-700 rounded-xl px-4 py-2 transition-all duration-300 cursor-pointer group">
-            <FaHome className="text-blue-400 group-hover:text-blue-300 transition-colors" />
-            <span className="text-[1.2rem] font-medium">Inicio</span>
+          <li>
+            <Link
+              href={"/"}
+              className="flex items-center gap-4 text-white hover:bg-gray-700 rounded-xl px-4 py-2 transition-all duration-300 cursor-pointer group"
+              onClick={handleCloseMenu}
+            >
+              <FaHome className="text-blue-400 group-hover:text-blue-300 transition-colors" />
+              <span className="text-[1.2rem] font-medium">Inicio</span>
+            </Link>
           </li>
-          <li className="flex items-center gap-4 text-white hover:bg-gray-700 rounded-xl px-4 py-2 transition-all duration-300 cursor-pointer group">
-            <FaGamepad className="text-green-400 group-hover:text-green-300 transition-colors" />
-            <span className="text-[1.2rem] font-medium">Juego diario</span>
+          <li>
+            <Link
+              href={"/daily"}
+              className="flex items-center gap-4 text-white hover:bg-gray-700 rounded-xl px-4 py-2 transition-all duration-300 cursor-pointer group"
+              onClick={handleCloseMenu}
+            >
+              <FaGamepad className="text-green-400 group-hover:text-green-300 transition-colors" />
+              <span className="text-[1.2rem] font-medium">Juego diario</span>
+            </Link>
           </li>
-          <li className="flex items-center gap-4 text-white hover:bg-gray-700 rounded-xl px-4 py-2 transition-all duration-300 cursor-pointer group">
-            <FcBarChart className="text-purple-400 group-hover:text-purple-300 transition-colors" />
-            <span className="text-[1.2rem] font-medium">Estadísticas</span>
-          </li>
-          <li className="flex items-center gap-4 text-white hover:bg-gray-700 rounded-xl px-4 py-2 transition-all duration-300 cursor-pointer group">
-            <FaEnvelope className="text-yellow-400 group-hover:text-yellow-300 transition-colors" />
-            <span className="text-[1.2rem] font-medium">Contacto</span>
+          <li>
+            <Link
+              href={"/stats"}
+              className="flex items-center gap-4 text-white hover:bg-gray-700 rounded-xl px-4 py-2 transition-all duration-300 cursor-pointer group"
+              onClick={handleCloseMenu}
+            >
+              <FcBarChart className="text-purple-400 group-hover:text-purple-300 transition-colors" />
+              <span className="text-[1.2rem] font-medium">Estadísticas</span>
+            </Link>
           </li>
         </ul>
         <div>

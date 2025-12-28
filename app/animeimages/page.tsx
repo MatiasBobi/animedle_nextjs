@@ -1,6 +1,5 @@
 "use client";
 import { getAnimeRandom } from "@/lib/utils/getRandomAnime";
-import Stage3_4Daily from "@/components/daily_game/stages/stage3_4";
 import { useEffect, useState } from "react";
 import { useAnimeTitles } from "@/hooks/useAnimeTitles";
 import Stage1Daily from "@/components/daily_game/stages/stage1";
@@ -67,11 +66,6 @@ const AnimeImagesPage = () => {
           >
             Cambiar anime
           </button>
-          <p>
-            {changeAnimeCountdown > 0
-              ? `Espera ${changeAnimeCountdown} segundos`
-              : ""}
-          </p>
         </div>
       </section>
       <section className="w-[90%] h-64 md:w-[100%] md:h-96">

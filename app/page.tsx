@@ -7,7 +7,7 @@ export default async function Home() {
   return (
     <main>
       <h1 className="h1_custom items-center justify-center text-center text-6xl py-8 text-stroke-animated">
-        Animedle
+        Anigame
       </h1>
 
       <section className="flex gap-8 flex-wrap justify-center py-8">

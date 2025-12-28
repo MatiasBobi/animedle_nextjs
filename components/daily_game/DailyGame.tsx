@@ -41,7 +41,9 @@ const DailyGame = ({
   const stage1_title = animes[0].title;
 
   // STAGE 2
-  const stage2_sypnosis = animes[1].synopsis;
+  const stage2_sypnosis = animes[1].synopsis
+    .split("[Escrito por MAL Rewrite]")[0]
+    .trim();
   const stage2_title = animes[1].title;
 
   // STAGE 3
@@ -103,7 +105,14 @@ const DailyGame = ({
           />
         );
       case 5:
-        return <Stage5Daily title={stage5_title} type_stat={"animedle_ok"} />;
+        return (
+          <Stage5Daily
+            title={stage5_title}
+            type_stat={"animedle_ok"}
+            type_game="daily"
+            stepinfo={stepsToDisplay}
+          />
+        );
       default:
         return null;
     }

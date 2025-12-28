@@ -74,12 +74,11 @@ const DailyPage = async () => {
   // Aca vamos a verificar si necesitamos actualizar o resetear el progreso del usuario
   const userLastDailyTime = new Date(DailyUserData.last_daily_table).getTime();
 
-  // Si la fecha del usuario es anterior al anime diario actual, reseteamos
   const isSameDaily = userLastDailyTime >= dailyAnimeDate;
 
   // Si la fecha es menor a la actual del danime diario reseteamos en supabase
   if (!isSameDaily) {
-    await (
+    const { data: updatedUserData } = await (
       await supabase
     )
       .from("user_data")
@@ -93,10 +92,13 @@ const DailyPage = async () => {
         game4_status: 2,
         game5_status: 2,
       })
-      .eq("user_id", userId);
+      .eq("user_id", userId)
+      .select("*")
+      .single();
+
+    DailyUserData = updatedUserData;
   }
 
-  // 7️⃣ Si ya jugó hoy → bloqueo
   if (isSameDaily && DailyUserData.daily_completed) {
     return <DailyCompleted dailyAnimeTime={dailyAnimeDate} />;
   }

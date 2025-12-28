@@ -9,11 +9,13 @@ const Stage5Daily = ({
   type_game,
   type_stat,
   fnChangeAnimeAnimeOnInfiniteMode,
+  stepinfo,
 }: {
   title: string;
   type_game: "daily" | "infinite";
   type_stat?: DailyProgressType;
   fnChangeAnimeAnimeOnInfiniteMode?: () => void;
+  stepinfo?: number[];
 }) => {
   // Funcion para actualizar la estadistica del usuario
   const { updateStat } = useDailyProgress();
@@ -37,10 +39,7 @@ const Stage5Daily = ({
   ]);
   const [isCorrect, setIsCorrect] = useState<boolean | string>("no_respondido");
   const [finishGame, setFinishGame] = useState<boolean>(false);
-  const [continueGame, setContinueGame] = useState<boolean>(false);
 
-  // COMPARAR BIEN EN MINUSCULA
-  // COMPARAR SIN SIMBOLOS
   const [attempts, setAttempts] = useState<number>(0);
 
   const title_with_spaces = title.toUpperCase().split(" ");
@@ -57,7 +56,16 @@ const Stage5Daily = ({
       setIsCorrect(true);
       if (type_game === "daily") {
         updateStepInfo(4, 1);
+        const stepinfoWithLastStep =
+          stepinfo?.map((value, index) => (index === 4 ? 1 : value)) ?? [];
+
         updateStat(type_stat, true, 1, true, "game5_status");
+        if (
+          stepinfoWithLastStep.length === 5 &&
+          stepinfoWithLastStep.every((value) => value === 1)
+        ) {
+          updateStat("all_ok", true, 1, true, "game5_status");
+        }
       }
     } else {
       setIsCorrect(false);
