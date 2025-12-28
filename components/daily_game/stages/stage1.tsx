@@ -50,7 +50,9 @@ const Stage1Daily = ({
       setIndividualPiece([true, true, true, true, true, true]);
       if (type_game === "daily") {
         updateStepInfo(0, 1);
-        updateStat(type_stat, true, 2, false, game_status);
+        if (type_stat && game_status) {
+          updateStat(type_stat, true, 2, false, game_status);
+        }
       }
       setIsCorrect(true);
     } else {
@@ -67,7 +69,9 @@ const Stage1Daily = ({
       if (newAttempts === 6) {
         if (type_game === "daily") {
           updateStepInfo(0, 0);
-          updateStat(type_stat, false, 2, false, game_status);
+          if (type_stat && game_status) {
+            updateStat(type_stat, false, 2, false, game_status);
+          }
         }
         setIsCorrect(false);
       }

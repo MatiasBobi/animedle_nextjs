@@ -1,9 +1,10 @@
 "use client";
 import Stage5Daily from "@/components/daily_game/stages/stage5";
 import { getAnimeRandom } from "@/lib/utils/getRandomAnime";
+import { AnimeDaily } from "@/types/daily_types";
 import { useEffect, useState } from "react";
 const AhorcaditoPage = () => {
-  const [anime, setAnime] = useState(null);
+  const [anime, setAnime] = useState<AnimeDaily | null>(null);
 
   const handleChangeAnime = async () => {
     const animeRandom = await getAnimeRandom();
