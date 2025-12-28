@@ -58,8 +58,9 @@ const Stage5Daily = ({
         updateStepInfo(4, 1);
         const stepinfoWithLastStep =
           stepinfo?.map((value, index) => (index === 4 ? 1 : value)) ?? [];
-
-        updateStat(type_stat, true, 1, true, "game5_status");
+        if (type_stat) {
+          updateStat(type_stat, true, 1, true, "game5_status");
+        }
         if (
           stepinfoWithLastStep.length === 5 &&
           stepinfoWithLastStep.every((value) => value === 1)
@@ -71,7 +72,9 @@ const Stage5Daily = ({
       setIsCorrect(false);
       if (type_game === "daily") {
         updateStepInfo(4, 0);
-        updateStat(type_stat, false, 1, true, "game5_status");
+        if (type_stat) {
+          updateStat(type_stat, false, 1, true, "game5_status");
+        }
       }
     }
   };

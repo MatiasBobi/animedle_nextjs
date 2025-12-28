@@ -112,7 +112,9 @@ const Stage3_4Daily = ({
       // Actualizamos la estadistica en la base de datos
       if (type_game === "daily") {
         updateStepInfo(type_stat === "opening_ok" ? 2 : 3, 1);
-        updateStat(type_stat, true, next_stage, false, game_status);
+        if (type_stat && game_status && next_stage) {
+          updateStat(type_stat, true, next_stage, false, game_status);
+        }
       }
       setIsCorrect(true);
       handleVideoEnd();
@@ -120,14 +122,16 @@ const Stage3_4Daily = ({
       // Actualizamos la estadistica en la base de datos
       if (type_game === "daily") {
         updateStepInfo(type_stat === "opening_ok" ? 2 : 3, 0);
-        updateStat(type_stat, false, next_stage, false, game_status);
+        if (type_stat && game_status && next_stage) {
+          updateStat(type_stat, false, next_stage, false, game_status);
+        }
       }
       setIsCorrect(false);
     }
   };
   const handleContinue = () => {
     if (type_game === "daily") {
-      setGameNumber(next_stage);
+      setGameNumber(next_stage ?? 5);
       setIsCorrect("no_respondido");
     }
     if (type_game === "infinite") {
@@ -185,13 +189,6 @@ const Stage3_4Daily = ({
               // Puedes gestionar errores aquí
             }}
             onLoad={() => setIsReady(true)}
-            config={{
-              file: {
-                attributes: {
-                  preload: "auto",
-                },
-              },
-            }}
           />
           {!showPlayer && (
             <div className="absolute inset-0 flex items-center justify-center bg-[#1E293B] text-white">
