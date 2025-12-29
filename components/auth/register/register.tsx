@@ -26,10 +26,12 @@ const RegisterComponent = ({ supabase }: { supabase: SupabaseClient }) => {
                 display_name: username as string,
               },
               emailRedirectTo:
-                "https://animedle-nextjs-git-dev-matias-bobis-projects.vercel.app/auth/callback",
+                "https://animedle-nextjs.vercel.app/auth/callback",
             },
           }
         );
+
+        // Manejar los errores de registro
 
         if (authError) {
           return {
